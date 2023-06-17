@@ -56,7 +56,7 @@ def update_quiz(request, quiz_id: int, data: UpdateQuizSchema):
 
 
 @quiz_api.get("/my-quiz-entries", response=QuizMyEntryOutputSchema)
-def start_quiz(request):
+def my_quizzes(request):
     user: User = request.auth
     quiz_entries = QuizEntry.objects.filter(user=user).order_by("id").all()
     return quiz_entries
