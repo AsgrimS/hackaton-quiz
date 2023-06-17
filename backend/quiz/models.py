@@ -104,7 +104,7 @@ class QuizEntry(models.Model):
             raise AppError("Answer already exists")
 
     def _calculate_score(self, question_no, answer: list[bool] | int):
-        question = self.quiz.question_set.get(question_number=question_no)
+        question = self.quiz.questions.get(question_number=question_no)
         if question.question_type == "closed":
             self._validate_closed_answer(answer, question)
             return self._calculate_closed_question_score(question, answer)
