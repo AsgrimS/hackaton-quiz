@@ -15,6 +15,7 @@ from quiz.schemas import (
     UpdateQuizSchema,
     QuizCreateInputSchema,
     QuizDetailsSchema,
+    QuizMyEntryOutputSchema,
 )
 
 quiz_api = Router(auth=JWTAuth())
@@ -52,6 +53,13 @@ def update_quiz(request, quiz_id: int, data: UpdateQuizSchema):
         if value is not None:
             setattr(quiz, key, value)
     quiz.save()
+
+
+@quiz_api.get("/my-quiz-entries", response=QuizMyEntryOutputSchema)
+def start_quiz(request):
+    user: User = request.auth
+    quiz_entries = QuizEntry.objects.filter(user=user).order_by("id").all()
+    return quiz_entries
 
 
 @quiz_api.post("/quiz-entries", response=QuizEntryOutputSchema)

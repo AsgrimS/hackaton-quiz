@@ -88,10 +88,16 @@ class QuizEntry(models.Model):
             "answer": answer,
             "score": str(self._calculate_score(question_no, answer)),
         }
+
+        if len(self.answers.keys()) == self.quiz.questions.count():
+            self.finish_quiz()
         self.save()
 
     def finish_quiz(self):
         self.finished_at = timezone.now()
+        self.score = sum(float(answer["score"]) for answer in self.answers.values()) / len(
+            self.answers
+        )
 
     def _validate_answer_does_not_exist_yet(self, question_no):
         if str(question_no) in self.answers.keys():
