@@ -28,9 +28,9 @@ select = [
   "N",  # pep8
   "W",
   "PL", # Pylint
-  "A",  # flake8
-
+  "A",  # fl`ake8
 ]
+unfixable = ["F401", "F841"]
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.272"
