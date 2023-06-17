@@ -1,4 +1,4 @@
-from ninja import ModelSchema
+from ninja import ModelSchema, Schema
 
 from quiz.models import Quiz, QuizEntry
 
@@ -19,3 +19,10 @@ class QuizInListSchema(ModelSchema):
     class Config:
         model = Quiz
         model_fields = ["id", "title", "description"]
+
+
+class LeaderboardEntrySchema(Schema):
+    username: str
+    score: float
+    place: int
+    time: float

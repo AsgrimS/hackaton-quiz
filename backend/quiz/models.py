@@ -47,7 +47,9 @@ class Question(models.Model):
     question_text = models.TextField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question_number = models.IntegerField(default=1)
-    question_type = models.CharField(max_length=6, default="closed", choices=QuestionType.choices)
+    question_type = models.CharField(
+        max_length=6, default="closed", choices=QuestionType.choices
+    )
     answers = models.JSONField(default=dict)
 
     def __str__(self):
@@ -64,6 +66,7 @@ class QuizEntry(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     answers = models.JSONField(default=dict)
+    score = models.FloatField(null=True)
 
     @classmethod
     def create_new(cls, user, quiz):
@@ -96,7 +99,9 @@ class QuizEntry(models.Model):
 
     def _calculate_closed_question_score(self, question: Question, answer: list[bool]):
         correct_answers = question.answers.correct
-        return sum(1 for a, b in zip(answer, correct_answers) if a == b) / len(correct_answers)
+        return sum(1 for a, b in zip(answer, correct_answers) if a == b) / len(
+            correct_answers
+        )
 
     def _validate_closed_answer(self, answer, question):
         if type(answer) != list:

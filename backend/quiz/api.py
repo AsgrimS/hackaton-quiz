@@ -5,7 +5,12 @@ from ninja_extra import Router
 from ninja_jwt.authentication import JWTAuth
 
 from quiz.models import Quiz, QuizEntry
-from quiz.schemas import QuizEntryInputSchema, QuizEntryOutputSchema, QuizInListSchema
+from quiz.schemas import (
+    LeaderboardEntrySchema,
+    QuizEntryInputSchema,
+    QuizEntryOutputSchema,
+    QuizInListSchema,
+)
 
 quiz_api = Router()
 
@@ -37,3 +42,16 @@ def add_answer(request, quiz_entry_id: int, question_no: int, answer: str):
     quiz_entry: QuizEntry = get_object_or_404(QuizEntry, id=quiz_entry_id, user=user)
 
     quiz_entry.add_answer(question_no=question_no, answer=answer)
+
+
+@quiz_api.get("/leaderboard/{quizz_id}", response=list[LeaderboardEntrySchema])
+def list_leaderboard(_request: HttpRequest, quizz_id):
+    # results = (
+    #     QuizEntry.objects.filter(finished_at__isnull=False).order_by("score").all()
+    # )
+
+    return [
+        {"username": "Bob", "score": 100, "place": 1, "time": 126},
+        {"username": "John", "score": 90, "place": 2, "time": 306},
+        {"username": "Max", "score": 10, "place": 3, "time": 50},
+    ]
