@@ -14,14 +14,21 @@ from quiz.schemas import (
     QuizInMyListSchema,
     UpdateQuizSchema,
     QuizCreateInputSchema,
+    QuizDetailsSchema,
 )
 
 quiz_api = Router(auth=JWTAuth())
 
 
-@quiz_api.get("/quizzes", response=list[QuizInListSchema])
+@quiz_api.get("/quizzes", response=list[QuizInListSchema], auth=None)
 def list_quizzes(_request):
     return Quiz.objects.filter(is_published=True).order_by("id").all()
+
+
+@quiz_api.get("/quizzes/{quiz_id}", response=list[QuizDetailsSchema])
+def list_quizzes(_request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    return quiz
 
 
 @quiz_api.get("/my-quizzes", response=list[QuizInMyListSchema])
@@ -71,7 +78,7 @@ def add_answer(request, quiz_entry_id: int, question_no: int, answer: AnswerSche
     quiz_entry.add_answer(question_no=question_no, answer=answer.value)
 
 
-@quiz_api.get("/leaderboard/{quizz_id}", response=list[LeaderboardEntrySchema])
+@quiz_api.get("/leaderboard/{quizz_id}", response=list[LeaderboardEntrySchema], auth=None)
 def list_leaderboard(_request: HttpRequest, quizz_id):
     # results = (
     #     QuizEntry.objects.filter(finished_at__isnull=False).order_by("score").all()

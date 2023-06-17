@@ -52,7 +52,9 @@ class Question(models.Model):
         CLOSED = "closed"
 
     question_text = models.TextField()
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(
+        Quiz, on_delete=models.CASCADE, related_name="questions", related_query_name="question"
+    )
     question_number = models.IntegerField(default=1)
     question_type = models.CharField(max_length=6, default="closed", choices=QuestionType.choices)
     answers = models.JSONField(default=dict)

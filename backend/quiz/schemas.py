@@ -1,6 +1,7 @@
 from ninja import ModelSchema, Schema
+from ninja.orm import create_schema
 
-from quiz.models import Quiz, QuizEntry
+from quiz.models import Quiz, QuizEntry, Question
 
 
 class QuizEntryInputSchema(ModelSchema):
@@ -50,3 +51,23 @@ class QuizCreateInputSchema(Schema):
     description: str
     open_questions: int
     closed_questions: int
+
+
+class QuestionDetailsSchema(ModelSchema):
+    class Config:
+        model = Question
+        fields = [
+            "question_text",
+            "quiz",
+            "question_number",
+            "question_type",
+            "answers",
+        ]
+
+
+class QuizDetailsSchema(ModelSchema):
+    questions: list[QuestionDetailsSchema]
+
+    class Config:
+        model = Quiz
+        fields = ["id", "title", "description", "questions"]
