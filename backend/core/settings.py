@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party
+    "corsheaders",
     # first party
     "quiz",
 ]
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -130,3 +133,5 @@ NINJA_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "LEEWAY": timedelta(minutes=5),
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
