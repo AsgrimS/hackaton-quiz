@@ -40,7 +40,7 @@ export const authOptions = {
 
         const data = await response.json();
 
-        return { ...data, name: data.username };
+        return { name: data.username };
       },
     }),
   ],

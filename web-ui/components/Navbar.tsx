@@ -17,6 +17,8 @@ import { useSession } from "next-auth/react";
 
 export const Navbar = () => {
   const { data: session } = useSession();
+  console.log(session);
+
   return (
     <Box>
       <Flex
