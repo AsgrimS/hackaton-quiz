@@ -56,7 +56,7 @@ class QuizCreateInputSchema(Schema):
 class QuestionDetailsSchema(ModelSchema):
     class Config:
         model = Question
-        fields = [
+        model_fields = [
             "question_text",
             "quiz",
             "question_number",
@@ -70,4 +70,4 @@ class QuizDetailsSchema(ModelSchema):
 
     class Config:
         model = Quiz
-        fields = ["id", "title", "description", "questions"]
+        model_fields = ["id", "title", "description", "questions"]
