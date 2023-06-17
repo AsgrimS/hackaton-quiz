@@ -1,6 +1,8 @@
 from django.db import models, transaction
 from django.utils import timezone
 
+from quiz.openai_client import openai_client
+
 
 class Quiz(models.Model):
     title = models.CharField(max_length=255)
@@ -11,48 +13,29 @@ class Quiz(models.Model):
         return self.title
 
     @classmethod
-    def create_new(cls, title, description, number_of_closed_questions, number_of_open_questions):
+    def create_new(cls, *, title, description, open_questions, closed_questions):
         quiz = cls(title=title, description=description)
         quiz.save()
 
-        quiz._generate_open_questions(number_of_open_questions)
-        quiz._generate_closed_questions(number_of_closed_questions)
+        quiz._generate_questions(open_questions, closed_questions)
 
         return quiz
 
-    # TODO: versioning
-    # def save(self, *args, **kwargs):
-    #     if not self.pk:
-    #         return super().save(*args, **kwargs)
-    #     else:
-    #         with transaction.atomic():
-    #             self.is_published = False
-    #             self.save()
-    #             instance = Quiz.objects.create(title=self.title, description=self.description, is_published=self.is_published, version=self.version+1)
-    #             instance.save(*args, **kwargs)
-    #         return instance
+    def _generate_questions(self, open_questions, closed_questions):
+        result = openai_client.generate_questions_for_quiz(
+            title=self.title,
+            description=self.description,
+            open_questions=open_questions,
+            closed_questions=closed_questions,
+        )
 
-    def _generate_closed_questions(
-        self,
-        number_of_closed_questions,
-    ):
-        for _ in range(number_of_closed_questions):
+        for num, question in enumerate(result["questions"], 1):
             Question.objects.create(
                 quiz=self,
-                type="closed",
-                question_text=...,
-                question_number=...,
-                answers={},
-            )
-
-    def _generate_open_questions(self, number_of_open_questions):
-        for _ in range(number_of_open_questions):
-            Question.objects.create(
-                quiz=self,
-                type="open",
-                question_text=...,
-                question_number=...,
-                answers={},
+                question_type=question["type"],
+                question_text=question["question"],
+                question_number=num,
+                answers=question["answers"],
             )
 
 

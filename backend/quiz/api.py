@@ -12,14 +12,13 @@ quiz_api = Router()
 
 @quiz_api.get("/quizzes", response=list[QuizInListSchema])
 def list_quizzes(_request: HttpRequest):
-    # TODO: filtering, pagination
     return Quiz.objects.filter(is_published=True).order_by("id").all()
 
 
 @quiz_api.post("/quiz-entries", auth=JWTAuth(), response=QuizEntryOutputSchema)
 def start_quiz(request, data: QuizEntryInputSchema):
     user: User = request.auth
-    quiz: Quiz = get_object_or_404(Quiz, id=data.quiz_id)
+    quiz: Quiz = get_object_or_404(Quiz, id=data.quiz, is_published=True)
     quiz_entry = QuizEntry.create_new(user=user, quiz=quiz)
     return quiz_entry
 
