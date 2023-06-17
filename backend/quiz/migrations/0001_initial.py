@@ -5,48 +5,67 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Quiz',
+            name="Quiz",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('is_published', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                ("is_published", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='OpenQuestion',
+            name="OpenQuestion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question_text', models.TextField()),
-                ('question_number', models.IntegerField(default=1)),
-                ('valid_response', models.TextField()),
-                ('quiz', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.quiz')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("question_text", models.TextField()),
+                ("question_number", models.IntegerField(default=1)),
+                ("valid_response", models.TextField()),
+                (
+                    "quiz",
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="quiz.quiz"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ClosedQuestion',
+            name="ClosedQuestion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question_text', models.TextField()),
-                ('question_number', models.IntegerField(default=1)),
-                ('points', models.IntegerField(default=0)),
-                ('answer_1', models.TextField()),
-                ('answer_2', models.TextField()),
-                ('answer_3', models.TextField()),
-                ('answer_4', models.TextField()),
-                ('correct_answer_1', models.BooleanField(default=False)),
-                ('correct_answer_2', models.BooleanField(default=False)),
-                ('correct_answer_3', models.BooleanField(default=False)),
-                ('correct_answer_4', models.BooleanField(default=False)),
-                ('quiz', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.quiz')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("question_text", models.TextField()),
+                ("question_number", models.IntegerField(default=1)),
+                ("points", models.IntegerField(default=0)),
+                ("answer_1", models.TextField()),
+                ("answer_2", models.TextField()),
+                ("answer_3", models.TextField()),
+                ("answer_4", models.TextField()),
+                ("correct_answer_1", models.BooleanField(default=False)),
+                ("correct_answer_2", models.BooleanField(default=False)),
+                ("correct_answer_3", models.BooleanField(default=False)),
+                ("correct_answer_4", models.BooleanField(default=False)),
+                (
+                    "quiz",
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="quiz.quiz"),
+                ),
             ],
         ),
     ]
