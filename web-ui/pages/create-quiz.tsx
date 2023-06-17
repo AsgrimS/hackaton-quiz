@@ -1,3 +1,4 @@
+import { API_URL } from "@/consts/api";
 import {
   Box,
   Button,
@@ -13,8 +14,9 @@ export default function CreateQuiz() {
   const [description, setDescription] = useState("");
   const [openQuestionsNr, setOpenQuestionsNr] = useState(0);
   const [closedQuestionsNr, setClosedQuestionsNr] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (
       title === "" ||
       description === "" ||
@@ -24,8 +26,45 @@ export default function CreateQuiz() {
       closedQuestionsNr > 10
     )
       return;
-    console.log(title, description, openQuestionsNr, closedQuestionsNr);
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/my-quizzes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          open_questions: openQuestionsNr,
+          closed_questions: closedQuestionsNr,
+        }),
+      });
+
+      const quiz = await response.json();
+      setLoading(false);
+
+      const response = await fetch(`${API_URL}/my-quizzes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          open_questions: openQuestionsNr,
+          closed_questions: closedQuestionsNr,
+        }),
+      });
+    } catch (e) {
+      setLoading(false);
+    }
   };
+
+  if (loading) return <div>Generating, this can take a while</div>;
 
   return (
     <FormControl display={{ base: "flex" }} flexDirection="column" gap="5">
