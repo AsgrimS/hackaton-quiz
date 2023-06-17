@@ -21,6 +21,7 @@ export default function Leaderboards() {
         options={options}
         value={selectedOption}
         onChange={setSelectedOption}
+        placeholder="Start typing to search for a quiz..."
       />
       <Leaderboard />
     </div>
