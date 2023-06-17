@@ -1,7 +1,6 @@
 import { API_URL } from "@/consts/api";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
 
 export default function Login() {
   const [username, setusername] = useState("");

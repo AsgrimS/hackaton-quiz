@@ -1,5 +1,6 @@
 import { LeaderBoardEntry } from "@/common/interfaces";
 import { fetcher } from "@/common/utils";
+import { API_URL } from "@/consts/api";
 import {
   Table,
   Thead,
@@ -16,7 +17,7 @@ import userSWR from "swr";
 
 export const Leaderboard = (props: { quizId: number }) => {
   const { data, error } = userSWR<LeaderBoardEntry[]>(
-    `http://localhost:8000/api/leaderboard/${props.quizId}`,
+    `${API_URL}/leaderboard/${props.quizId}`,
     fetcher
   );
 

@@ -1,11 +1,37 @@
+import { Quiz } from "@/common/interfaces";
+import { fetcher } from "@/common/utils";
 import { QuizCard } from "@/components/QuizCard";
+import { API_URL } from "@/consts/api";
 import { Box, Heading } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 
+import useSWR from "swr";
+
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+interface Option {
+  value: number;
+  label: string;
+}
+
+export const getServerSideProps: GetServerSideProps<{
+  options: Option[];
+}> = async () => {
+  const res = await fetch(`${API_URL}/quizzes`);
+  const quizes: Quiz[] = await res.json();
+  const options: Option[] = quizes.map((quiz) => ({
+    value: quiz.id,
+    label: quiz.title,
+  }));
+  console.log(options);
+  console.log("fgadsgsdagsad");
+
+  return { props: { options } };
+};
+
+export default function Home({ options }: { options: Option[] }) {
   const [token, setToken] = useState("");
   const [username, setUsername] = useState("");
 
@@ -23,21 +49,16 @@ export default function Home() {
           Last added quizes
         </Heading>
         <Box display="flex" alignItems="start" flexWrap="wrap">
-          <Box flex="50%">
-            <QuizCard
-              description="This is a quiz about the history of the world"
-              title="Math"
-              numberOfParticipants={69}
-              userPosition={1}
-            />
-          </Box>
-          <Box flex="50%">
-            <QuizCard
-              description="This is a quiz about the history of the world"
-              title="History"
-              numberOfParticipants={199}
-            />
-          </Box>
+          {!options.length && "No quizes"}
+          {options.slice(0, 2).map((option) => (
+            <Box flex="50%" key={option.value}>
+              <QuizCard
+                description="This is a quiz about the history of the world"
+                title={option.label}
+                numberOfParticipants={69}
+              />
+            </Box>
+          ))}
         </Box>
       </section>
       {!!token && (
@@ -46,22 +67,16 @@ export default function Home() {
             Quizes you recently completed
           </Heading>
           <Box display="flex" alignItems="start" flexWrap="wrap">
-            <Box flex="50%">
-              <QuizCard
-                description="This is a quiz about the history of the world"
-                title="JS"
-                numberOfParticipants={69}
-                userPosition={1}
-              />
-            </Box>
-            <Box flex="50%">
-              <QuizCard
-                description="This is a quiz about the history of the world"
-                title="History"
-                numberOfParticipants={199}
-                userPosition={12}
-              />
-            </Box>
+            {!options.length && "No quizes"}
+            {options.slice(0, 2).map((option) => (
+              <Box flex="50%" key={option.value}>
+                <QuizCard
+                  description="This is a quiz about the history of the world"
+                  title={option.label}
+                  numberOfParticipants={69}
+                />
+              </Box>
+            ))}
           </Box>
         </section>
       )}

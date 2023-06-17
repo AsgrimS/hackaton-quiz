@@ -1,5 +1,6 @@
 import { Quiz } from "@/common/interfaces";
 import { Leaderboard } from "@/components/Leaderboard";
+import { API_URL } from "@/consts/api";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import Select from "react-select";
@@ -12,7 +13,7 @@ interface Option {
 export const getServerSideProps: GetServerSideProps<{
   options: Option[];
 }> = async () => {
-  const res = await fetch("http://localhost:8000/api/quizzes");
+  const res = await fetch(`${API_URL}/quizzes`);
   const quizes: Quiz[] = await res.json();
   const options: Option[] = quizes.map((quiz) => ({
     value: quiz.id,
