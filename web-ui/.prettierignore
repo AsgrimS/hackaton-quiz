@@ -1,0 +1,28 @@
+# Ignore build directories
+.next
+out
+
+# Ignore package-lock.json file
+package-lock.json
+
+# Ignore public directory
+public
+
+# Ignore serverless functions
+api
+
+# Ignore static export directory
+__sapper__/
+
+# Ignore vercel output directory
+.vercel/
+
+# Ignore coverage reports
+coverage
+
+# Ignore node_modules directory
+node_modules
+
+# Ignore specific files
+/*.config.js
+/.eslintrc.js
