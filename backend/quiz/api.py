@@ -27,7 +27,7 @@ def list_quizzes(_request):
 
 
 @quiz_api.get("/quizzes/{quiz_id}", response=list[QuizDetailsSchema])
-def list_quizzes(_request, quiz_id):
+def single_quiz(_request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     return quiz
 
