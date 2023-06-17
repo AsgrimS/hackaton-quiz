@@ -1,5 +1,7 @@
-from ninja_extra import NinjaExtraAPI, Router
+from ninja_extra import NinjaExtraAPI
 from ninja_jwt.controller import NinjaJWTDefaultController
+
+from quiz.api import quiz_api
 
 api = NinjaExtraAPI()
 api.register_controllers(NinjaJWTDefaultController)
