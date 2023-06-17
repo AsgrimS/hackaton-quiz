@@ -6,15 +6,24 @@
 Based on the following inputs create a quiz and respond to me using the json schema specified.
 
 ---Input Data:
-quiz_title: "{quiz_title}"
-quiz_description: "{quiz_description}"
-number_of_questions: "{number_of_questions}"
-number_of_open_questions: "{number_of_open_questions}"
-number_of_closed_questions: "{number_of_closed_questions}"
+quiz_title: ""
+quiz_description: ""
+number_of_questions: ""
+number_of_open_questions: ""
+number_of_closed_questions: ""
 ---End Input Data
+
+---Input Data explanation:
+quiz_title - Title of the quiz to be generated
+quiz_description - Description of the quiz to be generated
+number_of_questions - Total number of questions to be generated. Number of question must be exaclty equal to the sum of number_of_open_questions and number_of_closed_questions
+number_of_open_questions - Number of open questions to be generated. Open question is a question that requires a free text answer.
+number_of_closed_questions - Number of closed questions to be generated. Closed question is a question that requires a selection of one or more answers from a list of possible answers.
+---
 
 ---Json schema
 {
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "title": {
@@ -31,14 +40,6 @@ number_of_closed_questions: "{number_of_closed_questions}"
         {
           "type": "object",
           "properties": {
-            "title": {
-              "type": "string",
-              "maxLength": 100
-            },
-            "description": {
-              "type": "string",
-              "maxLength": 250
-            },
             "type": {
               "type": "string",
               "pattern": "^(open|closed)$"
@@ -71,19 +72,11 @@ number_of_closed_questions: "{number_of_closed_questions}"
               "required": ["values", "correct_idx"]
             }
           },
-          "required": ["title", "description", "type", "question", "answers"]
+          "required": ["type", "question", "answers"]
         },
         {
           "type": "object",
           "properties": {
-            "title": {
-              "type": "string",
-              "maxLength": 100
-            },
-            "description": {
-              "type": "string",
-              "maxLength": 250
-            },
             "type": {
               "type": "string",
               "pattern": "^(open|closed)$"
@@ -110,7 +103,7 @@ number_of_closed_questions: "{number_of_closed_questions}"
               "required": ["correct_values"]
             }
           },
-          "required": ["title", "description", "type", "question", "answers"]
+          "required": ["type", "question", "answers"]
         }
       ]
     }
@@ -150,6 +143,5 @@ number_of_closed_questions: "{number_of_closed_questions}"
   ]
 }
 --- enf of example
-
 
 ```
