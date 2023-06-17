@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -143,17 +143,16 @@ const DesktopNav = () => {
 
       <Button
         as={"a"}
-        display={{ base: "none", md: "inline-flex" }}
+        display={{ base: "flex", md: "inline-flex" }}
         fontSize={"sm"}
         fontWeight={600}
-        color={"white"}
-        bg={"pink.400"}
-        href={"/api/auth/signin"}
-        _hover={{
-          bg: "pink.300",
-        }}
+        variant="solid"
+        colorScheme="blue"
+        alignItems="center"
+        href="/new-quiz"
       >
-        Sign In
+        <PlusSquareIcon />
+        <Text ml="1">Create new quiz</Text>
       </Button>
     </Stack>
   );

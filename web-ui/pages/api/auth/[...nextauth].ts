@@ -27,11 +27,20 @@ export const authOptions = {
           throw new Error("Email i hasło są wymagane");
         }
 
-        if (!(credentials.username === "test")) {
-          throw new Error("Nieprawidłowy email lub hasło");
-        }
+        const response = await fetch(`${process.env.NEXT_API_URL}/token/pair`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: credentials.username,
+            password: credentials.password,
+          }),
+        });
 
-        return { id: 1, name: "Test User" };
+        const data = await response.json();
+
+        return { ...data, name: data.username };
       },
     }),
   ],
