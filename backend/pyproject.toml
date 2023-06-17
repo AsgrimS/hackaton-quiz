@@ -11,6 +11,10 @@ Django = "^4.2.2"
 django-ninja = "^0.22.2"
 openai = "^0.27.8"
 
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.272"
