@@ -1,5 +1,9 @@
-from django.db import models, transaction
+from copy import deepcopy
+
+from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
+from ninja_extra.exceptions import ValidationError
 
 from quiz.openai_client import openai_client
 
@@ -8,13 +12,16 @@ class Quiz(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     is_published = models.BooleanField(default=False)
+    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title
 
     @classmethod
-    def create_new(cls, *, title, description, open_questions, closed_questions):
-        quiz = cls(title=title, description=description)
+    def create_new(
+        cls, *, title, description, open_questions, closed_questions, author: User | None = None
+    ):
+        quiz = cls(title=title, description=description, author=author)
         quiz.save()
 
         quiz._generate_questions(open_questions, closed_questions)
@@ -47,16 +54,14 @@ class Question(models.Model):
     question_text = models.TextField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question_number = models.IntegerField(default=1)
-    question_type = models.CharField(
-        max_length=6, default="closed", choices=QuestionType.choices
-    )
+    question_type = models.CharField(max_length=6, default="closed", choices=QuestionType.choices)
     answers = models.JSONField(default=dict)
 
     def __str__(self):
         return self.question_text
 
 
-class AppError(Exception):
+class AppError(ValidationError):
     pass
 
 
@@ -76,9 +81,10 @@ class QuizEntry(models.Model):
 
     def add_answer(self, question_no, answer):
         self._validate_answer_does_not_exist_yet(question_no)
+        self.answers = deepcopy(self.answers)
         self.answers[question_no] = {
             "answer": answer,
-            "score": self._calculate_score(question_no, answer),
+            "score": str(self._calculate_score(question_no, answer)),
         }
         self.save()
 
@@ -86,10 +92,10 @@ class QuizEntry(models.Model):
         self.finished_at = timezone.now()
 
     def _validate_answer_does_not_exist_yet(self, question_no):
-        if question_no in self.answers:
+        if str(question_no) in self.answers.keys():
             raise AppError("Answer already exists")
 
-    def _calculate_score(self, question_no, answer):
+    def _calculate_score(self, question_no, answer: list[bool] | int):
         question = self.quiz.question_set.get(question_number=question_no)
         if question.question_type == "closed":
             self._validate_closed_answer(answer, question)
@@ -98,17 +104,19 @@ class QuizEntry(models.Model):
             return self._calculate_open_question_score(question, answer)
 
     def _calculate_closed_question_score(self, question: Question, answer: list[bool]):
-        correct_answers = question.answers.correct
-        return sum(1 for a, b in zip(answer, correct_answers) if a == b) / len(
-            correct_answers
-        )
+        correct_answers = question.answers["correct"]
+        return sum(1 for a, b in zip(answer, correct_answers) if a is b) / len(correct_answers)
 
     def _validate_closed_answer(self, answer, question):
         if type(answer) != list:
             raise AppError("Answer is not valid")
-        if len(answer) != len(question.answers.correct):
+        if len(answer) != len(question.answers["correct"]):
             raise AppError("Answer is not valid")
 
-    def _calculate_open_question_score(self, question, answer):
-        # check validity of the answer using openai chatgpt api
-        return 0.5
+    def _calculate_open_question_score(self, question: Question, answer: str):
+        correct_answers = question.answers["correct_values"]
+
+        result = openai_client.check_user_response_against_valid_responses(
+            question=question.question_text, user_response=answer, valid_responses=correct_answers
+        )
+        return result

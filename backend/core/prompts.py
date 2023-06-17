@@ -1,3 +1,5 @@
+import json
+
 QUESTIONS_GENERATING_INTRO = """Based on the following inputs create a quiz and respond to me using the json schema specified.
 
 ---Input Data:
@@ -53,19 +55,26 @@ closed_questions - Number of closed questions to be generated. Closed question i
                     }
                   ]
                 },
-                "correct_idx": {
+                "correct": {
                   "type": "array",
                   "items": [
                     {
-                      "type": "integer"
+                      "type": "boolean"
                     }
                   ]
                 }
               },
-              "required": ["values", "correct_idx"]
+              "required": [
+                "values",
+                "correct"
+              ]
             }
           },
-          "required": ["type", "question", "answers"]
+          "required": [
+            "type",
+            "question",
+            "answers"
+          ]
         },
         {
           "type": "object",
@@ -83,8 +92,6 @@ closed_questions - Number of closed questions to be generated. Closed question i
               "properties": {
                 "correct_values": {
                   "type": "array",
-                  "minContains": 1,
-                  "maxContains": 1,
                   "items": [
                     {
                       "type": "string",
@@ -133,15 +140,15 @@ SAMPLE_QUIZ_RESPONSE = """
       "question": "How many number types does python have?",
       "answers": {
         "values": ["1", "2", "3", "4"],
-        "correct_idx": [2]
+        "correct": [false, false, true, false]
       }
     },
     {
       "type": "closed",
-      "question": "Which is keyword used to declare a function in python?",
+      "question": "Which of the types below represent the numbers in python?",
       "answers": {
-        "values": ["def", "function", "define", "func"],
-        "correct_idx": [0]
+        "values": ["Decimal", "int", "str", "NoneType"],
+        "correct": [true, true, false, false]
       }
     },
     {
@@ -154,3 +161,61 @@ SAMPLE_QUIZ_RESPONSE = """
   ]
 }
 """
+
+
+VALIDATE_REQUEST_INTRO = """
+Based on the following inputs check correctness level of user_answer against the correct answer.
+The correctness level should determined by the similarity of the user_answer and the true_answer. The similarity should be determined by logical similarity of the two answers. The similarity should be determined by the following rules:
+- If the user_response is exactly the same as one of the valid_responses the correctness level should be 100
+- If the user_response is not exactly the same as one of the valid_responses but is logically the same the correctness level should be 100
+- If the user_response is not logically the same as any of the valid_responses the correctness level should be 0
+- It is possible to have correctness level between 0 and 100 with two decimal places
+
+Answer in json using the json response schema.
+
+---Input Data:
+question: str
+valid_responses: ["Memory Safety"]
+user_response: "Safe memory"
+---End Input Data
+
+---Input Data explanation:
+question - Question that the user is answering
+true_answer - Correct answer to the question
+user_answer - User answer to the question
+---End Input Data explanation
+
+---Json response schema
+{
+"$schema": "http://json-schema.org/draft-04/schema#",
+"type": "object",
+"properties": {
+"question": {
+"type": "string"
+},
+"true_answer": {
+"type": "string"
+},
+"user_answer": {
+"type": "string"
+},
+"correctness_level": {
+"type": "number"
+}
+},
+"required": ["question", "true_answer", "user_answer", "correctness_level"]
+}
+----End of Json response schema
+"""
+
+
+SAMPLE_VALIDATE_REQUEST = json.dumps(
+    dict(
+        question="How do you print 'Hello World' in python?",
+        valid_responses=["print('Hello World')"],
+        user_response="use print('Hello World')",
+    )
+)
+
+
+SAMPLE_VALIDATE_RESPONSE = """100"""

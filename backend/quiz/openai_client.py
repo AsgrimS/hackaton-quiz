@@ -18,7 +18,7 @@ class OpenAIClient:
 
     def generate_questions_for_quiz(
         self, *, title: str, description: str, open_questions: int, closed_questions: int
-    ) -> list:
+    ) -> dict:
         messages = [
             {"role": "system", "content": prompts.QUESTIONS_GENERATING_INTRO},
             {"role": "user", "content": prompts.SAMPLE_QUIZ_REQUEST},
@@ -38,31 +38,37 @@ class OpenAIClient:
             messages=messages,
         )
 
-        return json.loads(response.choices[0].message.content)
+        sanitized_content = (
+            "{" + response.choices[0].message.content.split("{", 1)[1].rsplit("}", 1)[0] + "}"
+        )
+
+        print(f"{sanitized_content=}")
+        return json.loads(sanitized_content)
 
     def check_user_response_against_valid_responses(
         self, question: str, valid_responses: list[str], user_response: str
     ) -> Decimal:
-        def _build_prompt(self, question: str, valid_responses: list[str], user_response: str):
-            return f"""
-                Question: {question}
-                Valid responses: {valid_responses}
-                User response: {user_response}
-                Score:"""
+        messages = [
+            {"role": "system", "content": prompts.VALIDATE_REQUEST_INTRO},
+            {"role": "user", "content": prompts.SAMPLE_VALIDATE_REQUEST},
+            {"role": "assistant", "content": prompts.SAMPLE_VALIDATE_RESPONSE},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    dict(
+                        question=question,
+                        user_response=user_response,
+                        valid_responses=valid_responses,
+                    ),
+                ),
+            },
+        ]
 
-        """Check if question is valid against valid_responses."""
-        prompt = _build_prompt(question, valid_responses, user_response)
         response = openai.ChatCompletion.create(
-            engine="gpt-3.5-turbo",
-            prompt=prompt,
-            temperature=0.3,
-            max_tokens=1,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=["\n"],
+            model="gpt-3.5-turbo",
+            messages=messages,
         )
-        return Decimal(response.choices[0].text)
+        return Decimal(response.choices[0].message.content.strip())
 
 
 openai_client = OpenAIClient(api_key=settings.OPENAI_API_KEY)

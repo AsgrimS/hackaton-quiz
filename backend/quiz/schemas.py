@@ -21,8 +21,32 @@ class QuizInListSchema(ModelSchema):
         model_fields = ["id", "title", "description"]
 
 
+class QuizInMyListSchema(ModelSchema):
+    class Config:
+        model = Quiz
+        model_fields = ["id", "title", "description", "is_published"]
+
+
+class UpdateQuizSchema(ModelSchema):
+    class Config:
+        model = Quiz
+        model_fields = ["title", "description", "is_published"]
+        model_fields_optional = ["title", "description", "is_published"]
+
+
+class AnswerSchema(Schema):
+    value: list[bool] | str
+
+
 class LeaderboardEntrySchema(Schema):
     username: str
     score: float
     place: int
     time: float
+
+
+class QuizCreateInputSchema(Schema):
+    title: str
+    description: str
+    open_questions: int
+    closed_questions: int
