@@ -71,3 +71,15 @@ class QuizDetailsSchema(ModelSchema):
     class Config:
         model = Quiz
         model_fields = ["id", "title", "description"]
+
+
+class QuizMyEntryOutputSchema(ModelSchema):
+    class Config:
+        model = QuizEntry
+        model_fields = [
+            "quiz",
+            "started_at",
+            "finished_at",
+            "answers",
+            "score",
+        ]
