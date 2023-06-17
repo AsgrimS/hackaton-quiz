@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "question": {
+      "type": "string"
+    },
+    "true_answer": {
+      "type": "string"
+    },
+    "user_answer": {
+      "type": "string"
+    },
+    "correctness_level": {
+      "type": "number"
+    }
+  },
+  "required": ["question", "true_answer", "user_answer", "correctness_level"]
+}
