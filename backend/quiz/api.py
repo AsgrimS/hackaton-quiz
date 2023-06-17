@@ -26,7 +26,7 @@ def list_quizzes(_request):
     return Quiz.objects.filter(is_published=True).order_by("id").all()
 
 
-@quiz_api.get("/quizzes/{quiz_id}", response=list[QuizDetailsSchema])
+@quiz_api.get("/quizzes/{quiz_id}", response=QuizDetailsSchema)
 def single_quiz(_request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     return quiz
