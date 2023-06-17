@@ -15,9 +15,26 @@ openai = "^0.27.8"
 venvPath = "."
 venv = ".venv"
 
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+select = [
+  "E",  # Pycodestyle
+  "W",
+  "F",  # Pyflakes
+  "I",  # isort
+  "N",  # pep8
+  "W",
+  "PL", # Pylint
+  "A",  # flake8
+
+]
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.272"
+black = "^23.3.0"
 
 [build-system]
 requires = ["poetry-core"]
