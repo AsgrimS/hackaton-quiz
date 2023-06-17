@@ -5,6 +5,8 @@ services:
     container_name: django-app
     command: "poetry run python manage.py runserver 0.0.0.0:8000"
     build: .
+    env_file:
+      - .env
     volumes:
       - .:/app
     ports:

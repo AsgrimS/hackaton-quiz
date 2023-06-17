@@ -1,20 +1,29 @@
+import { Quiz } from "@/common/interfaces";
 import { Leaderboard } from "@/components/Leaderboard";
+import { GetServerSideProps } from "next";
 import { useState } from "react";
 import Select from "react-select";
 
 interface Option {
-  value: string;
+  value: number;
   label: string;
 }
 
-const options: Option[] = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
+export const getServerSideProps: GetServerSideProps<{
+  options: Option[];
+}> = async () => {
+  const res = await fetch("http://localhost:8000/api/quizzes");
+  const quizes: Quiz[] = await res.json();
+  const options: Option[] = quizes.map((quiz) => ({
+    value: quiz.id,
+    label: quiz.title,
+  }));
+  return { props: { options } };
+};
 
-export default function Leaderboards() {
+export default function Leaderboards({ options }: { options: Option[] }) {
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+
   return (
     <div>
       <Select
@@ -23,7 +32,7 @@ export default function Leaderboards() {
         onChange={setSelectedOption}
         placeholder="Start typing to search for a quiz..."
       />
-      <Leaderboard />
+      {selectedOption && <Leaderboard quizId={selectedOption.value} />}
     </div>
   );
 }
