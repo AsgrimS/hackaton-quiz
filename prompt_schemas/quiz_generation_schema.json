@@ -1,0 +1,25 @@
+{
+  "title": "",
+  "description": "",
+  "question": [
+    {
+      "title": "",
+      "description": "",
+      "type": "closed|open",
+      "question": "",
+      "answers": {
+        "values": ["A", "B", "C"],
+        "correct_idx": [1, 3, 5]
+      }
+    },
+    {
+      "title": "",
+      "description": "",
+      "type": "closed|open",
+      "question": "",
+      "answers": {
+        "correct_values": ["lorem ipsum"]
+      }
+    }
+  ]
+}
