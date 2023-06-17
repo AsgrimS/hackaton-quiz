@@ -1,0 +1,29 @@
+{
+  "title": "Python Quiz",
+  "description": "Quiz that tests your python knowledge on begginer level.",
+  "questions": [
+    {
+      "type": "closed",
+      "question": "How many number types does python have?",
+      "answers": {
+        "values": ["1", "2", "3", "4"],
+        "correct_idx": [2]
+      }
+    },
+    {
+      "type": "closed",
+      "question": "Which is keyword used to declare a function in python?",
+      "answers": {
+        "values": ["def", "function", "define", "func"],
+        "correct_idx": [0]
+      }
+    },
+    {
+      "type": "open",
+      "question": "How do you print 'Hello World' in python?",
+      "answers": {
+        "correct_values": ["print('Hello World')"]
+      }
+    }
+  ]
+}
