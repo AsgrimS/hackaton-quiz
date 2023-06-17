@@ -43,28 +43,35 @@ export default function CreateQuiz() {
         }),
       });
 
-      const quiz = await response.json();
+      const quizId = await response.json();
       setLoading(false);
 
-      const response = await fetch(`${API_URL}/my-quizzes`, {
-        method: "POST",
+      await fetch(`${API_URL}/my-quizzes/${quizId}`, {
+        method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          title,
-          description,
-          open_questions: openQuestionsNr,
-          closed_questions: closedQuestionsNr,
+          is_published: true,
         }),
       });
+
+      const response2 = await fetch(`${API_URL}/quizzes/${quizId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const quiz3 = await response2.json();
+
+      console.log(quiz3);
     } catch (e) {
       setLoading(false);
     }
   };
 
-  if (loading) return <div>Generating, this can take a while</div>;
+  if (loading)
+    return <div>Generating, this can take a while, and can break</div>;
 
   return (
     <FormControl display={{ base: "flex" }} flexDirection="column" gap="5">
@@ -76,6 +83,7 @@ export default function CreateQuiz() {
           onChange={(e) => setTitle(e.target.value)}
           isInvalid={title === ""}
         />
+        <FormHelperText>FE. Quiz JS</FormHelperText>
       </Box>
       <Box>
         <FormLabel>Quiz description</FormLabel>
@@ -85,6 +93,7 @@ export default function CreateQuiz() {
           onChange={(e) => setDescription(e.target.value)}
           isInvalid={description === ""}
         />
+        <FormHelperText>FE. Quiz JS for begginers</FormHelperText>
       </Box>
       <Box>
         <FormLabel>Number of open questions</FormLabel>
@@ -97,7 +106,9 @@ export default function CreateQuiz() {
           }}
           isInvalid={openQuestionsNr < 0 || closedQuestionsNr > 10}
         />
-        <FormHelperText>Max 10 for ChatGPT performance reasons.</FormHelperText>
+        <FormHelperText>
+          Max 10 for ChatGPT performance reasons.{" "}
+        </FormHelperText>
       </Box>
 
       <Box>
