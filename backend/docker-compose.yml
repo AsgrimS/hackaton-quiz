@@ -1,11 +1,10 @@
+version: "3"
+
 services:
-  django:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+  app:
+    command: "poetry run python manage.py runserver 0.0.0.0:8000"
+    build: .
     volumes:
-      - .:/code
+      - .:/app
     ports:
       - "8000:8000"
-    entrypoint: "poetry run"
