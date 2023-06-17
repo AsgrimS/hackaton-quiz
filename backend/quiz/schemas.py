@@ -70,4 +70,4 @@ class QuizDetailsSchema(ModelSchema):
 
     class Config:
         model = Quiz
-        model_fields = ["id", "title", "description", "questions"]
+        model_fields = ["id", "title", "description"]
