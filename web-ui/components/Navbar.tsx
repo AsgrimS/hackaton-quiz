@@ -13,8 +13,10 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 
 export const Navbar = () => {
+  const { data: session } = useSession();
   return (
     <Box>
       <Flex
@@ -43,34 +45,46 @@ export const Navbar = () => {
         </Flex>
 
         <Stack
-          flex={{ base: 1, md: 0 }}
+          flex={{ base: 1 }}
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
         >
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            href={"#"}
-          >
-            Sign In
-          </Button>
-          <Button
-            as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"pink.400"}
-            href={"#"}
-            _hover={{
-              bg: "pink.300",
-            }}
-          >
-            Sign Up
-          </Button>
+          {session ? (
+            <Box display={{ base: "flex" }}>
+              <Text display={{ base: "flex" }} alignItems="center" mr="4">
+                Logged in as {session.user?.name}
+              </Text>
+              <Button
+                as={"a"}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"pink.400"}
+                href={"/api/auth/signout"}
+                _hover={{
+                  bg: "pink.300",
+                }}
+              >
+                Sign Out
+              </Button>
+            </Box>
+          ) : (
+            <Button
+              as={"a"}
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"sm"}
+              fontWeight={600}
+              color={"white"}
+              bg={"pink.400"}
+              href={"/api/auth/signin"}
+              _hover={{
+                bg: "pink.300",
+              }}
+            >
+              Sign In
+            </Button>
+          )}
         </Stack>
       </Flex>
     </Box>
