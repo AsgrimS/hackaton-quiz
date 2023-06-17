@@ -1,4 +1,11 @@
-import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+} from "@chakra-ui/react";
 import { useState } from "react";
 
 export default function CreateQuiz() {
@@ -8,6 +15,15 @@ export default function CreateQuiz() {
   const [closedQuestionsNr, setClosedQuestionsNr] = useState(0);
 
   const handleSubmit = () => {
+    if (
+      title === "" ||
+      description === "" ||
+      openQuestionsNr < 0 ||
+      openQuestionsNr > 10 ||
+      closedQuestionsNr < 0 ||
+      closedQuestionsNr > 10
+    )
+      return;
     console.log(title, description, openQuestionsNr, closedQuestionsNr);
   };
 
@@ -40,8 +56,9 @@ export default function CreateQuiz() {
             if (!isNaN(Number(e.target.value)))
               setOpenQuestionsNr(Number(e.target.value));
           }}
-          isInvalid={openQuestionsNr < 0}
+          isInvalid={openQuestionsNr < 0 || closedQuestionsNr > 10}
         />
+        <FormHelperText>Max 10 for ChatGPT performance reasons.</FormHelperText>
       </Box>
 
       <Box>
@@ -53,8 +70,9 @@ export default function CreateQuiz() {
             if (!isNaN(Number(e.target.value)))
               setClosedQuestionsNr(Number(e.target.value));
           }}
-          isInvalid={closedQuestionsNr < 0}
+          isInvalid={closedQuestionsNr < 0 || closedQuestionsNr > 10}
         />
+        <FormHelperText>Max 10 for ChatGPT performance reasons.</FormHelperText>
       </Box>
       <Button type="submit" colorScheme="blue" onClick={handleSubmit}>
         Generate Quiz with ChatGPT
