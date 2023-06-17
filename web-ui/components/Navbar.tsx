@@ -14,10 +14,10 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export const Navbar = () => {
   const { data: session } = useSession();
-  console.log(session);
 
   return (
     <Box>
@@ -101,6 +101,7 @@ const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  const router = useRouter();
 
   return (
     <Stack direction={"row"} spacing={4} alignItems="center">
@@ -142,20 +143,20 @@ const DesktopNav = () => {
           </Popover>
         </Box>
       ))}
-
-      <Button
-        as={"a"}
-        display={{ base: "flex", md: "inline-flex" }}
-        fontSize={"sm"}
-        fontWeight={600}
-        variant="solid"
-        colorScheme="blue"
-        alignItems="center"
-        href="/create-quiz"
-      >
-        <PlusSquareIcon />
-        <Text ml="1">Create new quiz</Text>
-      </Button>
+      {!(router.pathname === "/create-quiz") && (
+        <Button
+          as={"a"}
+          display={{ base: "flex", md: "inline-flex" }}
+          fontSize={"sm"}
+          fontWeight={600}
+          colorScheme="blue"
+          alignItems="center"
+          href="/create-quiz"
+        >
+          <PlusSquareIcon />
+          <Text ml="1">Create new quiz</Text>
+        </Button>
+      )}
     </Stack>
   );
 };
