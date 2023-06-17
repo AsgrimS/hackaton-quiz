@@ -10,17 +10,51 @@ from quiz.schemas import (
     QuizEntryInputSchema,
     QuizEntryOutputSchema,
     QuizInListSchema,
+    AnswerSchema,
+    QuizInMyListSchema,
+    UpdateQuizSchema,
+    QuizCreateInputSchema,
+    QuizDetailsSchema,
 )
 
-quiz_api = Router()
+quiz_api = Router(auth=JWTAuth())
 
 
-@quiz_api.get("/quizzes", response=list[QuizInListSchema])
-def list_quizzes(_request: HttpRequest):
+@quiz_api.get("/quizzes", response=list[QuizInListSchema], auth=None)
+def list_quizzes(_request):
     return Quiz.objects.filter(is_published=True).order_by("id").all()
 
 
-@quiz_api.post("/quiz-entries", auth=JWTAuth(), response=QuizEntryOutputSchema)
+@quiz_api.get("/quizzes/{quiz_id}", response=list[QuizDetailsSchema])
+def list_quizzes(_request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    return quiz
+
+
+@quiz_api.get("/my-quizzes", response=list[QuizInMyListSchema])
+def my_quizzes(request):
+    user: User = request.auth
+    return Quiz.objects.filter(author=user).order_by("id").all()
+
+
+@quiz_api.post("/my-quizzes")
+def create_quiz(request, data: QuizCreateInputSchema):
+    user: User = request.auth
+    quiz = Quiz.create_new(**data.dict(), author=user)
+    return quiz.id
+
+
+@quiz_api.patch("/my-quizzes/{quiz_id}")
+def update_quiz(request, quiz_id: int, data: UpdateQuizSchema):
+    user: User = request.auth
+    quiz = get_object_or_404(Quiz, author=user, id=quiz_id)
+    for key, value in data:
+        if value is not None:
+            setattr(quiz, key, value)
+    quiz.save()
+
+
+@quiz_api.post("/quiz-entries", response=QuizEntryOutputSchema)
 def start_quiz(request, data: QuizEntryInputSchema):
     user: User = request.auth
     quiz: Quiz = get_object_or_404(Quiz, id=data.quiz, is_published=True)
@@ -28,7 +62,7 @@ def start_quiz(request, data: QuizEntryInputSchema):
     return quiz_entry
 
 
-@quiz_api.post("/quiz-entries/{quiz_entry_id}/finish", auth=JWTAuth())
+@quiz_api.post("/quiz-entries/{quiz_entry_id}/finish")
 def finish_quiz(request, quiz_entry_id: int):
     user: User = request.auth
     quiz_entry: QuizEntry = get_object_or_404(QuizEntry, id=quiz_entry_id, user=user)
@@ -36,15 +70,15 @@ def finish_quiz(request, quiz_entry_id: int):
     quiz_entry.finish_quiz()
 
 
-@quiz_api.patch("/quiz-entries/{quiz_entry_id}/answers/{question_no}", auth=JWTAuth())
-def add_answer(request, quiz_entry_id: int, question_no: int, answer: str):
+@quiz_api.patch("/quiz-entries/{quiz_entry_id}/answers/{question_no}")
+def add_answer(request, quiz_entry_id: int, question_no: int, answer: AnswerSchema):
     user: User = request.auth
     quiz_entry: QuizEntry = get_object_or_404(QuizEntry, id=quiz_entry_id, user=user)
 
-    quiz_entry.add_answer(question_no=question_no, answer=answer)
+    quiz_entry.add_answer(question_no=question_no, answer=answer.value)
 
 
-@quiz_api.get("/leaderboard/{quizz_id}", response=list[LeaderboardEntrySchema])
+@quiz_api.get("/leaderboard/{quizz_id}", response=list[LeaderboardEntrySchema], auth=None)
 def list_leaderboard(_request: HttpRequest, quizz_id):
     # results = (
     #     QuizEntry.objects.filter(finished_at__isnull=False).order_by("score").all()

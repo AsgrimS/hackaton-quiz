@@ -140,3 +140,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "editme")
+
+# QUIZ settings
+QUIZ_MAX_QUESTIONS = 10
