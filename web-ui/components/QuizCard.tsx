@@ -11,6 +11,7 @@ import {
   ButtonGroup,
   Divider,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 interface Props {
   title: string;
@@ -25,6 +26,16 @@ export const QuizCard = ({
   numberOfParticipants,
   userPosition,
 }: Props) => {
+  const [token, setToken] = useState("");
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (!!localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token") || "");
+      setUsername(localStorage.getItem("username") || "");
+    }
+  }, []);
+
   return (
     <Card mr={6} mb={6}>
       <CardHeader>
@@ -38,29 +49,33 @@ export const QuizCard = ({
             <Heading size="xs">Description</Heading>
             <Text size="xs"> {description}</Text>
           </Box>
-          <Box>
-            <Heading size="xs">
-              Your position / Number of partipicipants
-            </Heading>
-            {userPosition ? (
-              <Text size="xs">
-                {userPosition} / {numberOfParticipants}
-              </Text>
-            ) : (
-              <Text size="xs">You have not played this quiz yet</Text>
-            )}
-          </Box>
+          {!!token && (
+            <Box>
+              <Heading size="xs">
+                Your position / Number of partipicipants
+              </Heading>
+              {userPosition ? (
+                <Text size="xs">
+                  {userPosition} / {numberOfParticipants}
+                </Text>
+              ) : (
+                <Text size="xs">You have not played this quiz yet</Text>
+              )}
+            </Box>
+          )}
         </Stack>
       </CardBody>
       <Divider />
 
-      <CardFooter>
-        <ButtonGroup spacing="2">
-          <Button variant="solid" colorScheme="blue" size="sm">
-            <Text>{!userPosition ? "Start this quiz" : "Try again"}</Text>
-          </Button>
-        </ButtonGroup>
-      </CardFooter>
+      {!!token && (
+        <CardFooter>
+          <ButtonGroup spacing="2">
+            <Button variant="solid" colorScheme="blue" size="sm">
+              <Text>{!userPosition ? "Start this quiz" : "Try again"}</Text>
+            </Button>
+          </ButtonGroup>
+        </CardFooter>
+      )}
     </Card>
   );
 };

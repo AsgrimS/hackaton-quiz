@@ -13,11 +13,19 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export const Navbar = () => {
-  const { data: session } = useSession();
+  const [token, setToken] = useState("");
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (!!localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token") || "");
+      setUsername(localStorage.getItem("username") || "");
+    }
+  }, []);
 
   return (
     <Box>
@@ -56,10 +64,10 @@ export const Navbar = () => {
           direction={"row"}
           spacing={6}
         >
-          {session ? (
+          {!!token ? (
             <Box display={{ base: "flex" }}>
               <Text display={{ base: "flex" }} alignItems="center" mr="4">
-                Logged in as {session.user?.name}
+                Logged in as {username}
               </Text>
               <Button
                 as={"a"}
@@ -67,9 +75,13 @@ export const Navbar = () => {
                 fontWeight={600}
                 color={"white"}
                 bg={"pink.400"}
-                href={"/api/auth/signout"}
                 _hover={{
                   bg: "pink.300",
+                }}
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("username");
+                  window.location.href = "/";
                 }}
               >
                 Sign Out
@@ -83,7 +95,7 @@ export const Navbar = () => {
               fontWeight={600}
               color={"white"}
               bg={"pink.400"}
-              href={"/api/auth/signin"}
+              href={"/login"}
               _hover={{
                 bg: "pink.300",
               }}
@@ -102,6 +114,15 @@ const DesktopNav = () => {
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
   const router = useRouter();
+  const [token, setToken] = useState("");
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (!!localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token") || "");
+      setUsername(localStorage.getItem("username") || "");
+    }
+  }, []);
 
   return (
     <Stack direction={"row"} spacing={4} alignItems="center">
@@ -143,7 +164,7 @@ const DesktopNav = () => {
           </Popover>
         </Box>
       ))}
-      {!(router.pathname === "/create-quiz") && (
+      {!(router.pathname === "/create-quiz") && !!token && (
         <Button
           as={"a"}
           display={{ base: "flex", md: "inline-flex" }}
