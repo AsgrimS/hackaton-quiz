@@ -17,7 +17,12 @@ quiz_api = Router()
 
 @quiz_api.get("/quizzes", response=list[QuizInListSchema])
 def list_quizzes(_request: HttpRequest):
-    return Quiz.objects.filter(is_published=True).order_by("id").all()
+    # return Quiz.objects.filter(is_published=True).order_by("id").all()
+
+    return [
+        {"id": 1, "title": "Best quizz", "description": "Lorem"},
+        {"id": 2, "title": "Another quizz", "description": "Lorem epsum"},
+    ]
 
 
 @quiz_api.post("/quiz-entries", auth=JWTAuth(), response=QuizEntryOutputSchema)
