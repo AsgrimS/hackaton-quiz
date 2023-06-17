@@ -1,0 +1,6 @@
+{
+  "question": "How do you print 'Hello World' in python?",
+  "true_answer": "print('Hello World')",
+  "user_answer": "use print('Hello World')",
+  "correctness_level": 100
+}

@@ -21,7 +21,7 @@ number_of_open_questions - Number of open questions to be generated. Open questi
 number_of_closed_questions - Number of closed questions to be generated. Closed question is a question that requires a selection of one or more answers from a list of possible answers.
 ---
 
----Json schema
+---Json response schema
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -110,7 +110,7 @@ number_of_closed_questions - Number of closed questions to be generated. Closed 
   },
   "required": ["title", "description", "questions"]
 }
-----End of Json schema
+----End of Json response schema
 
 ---Example json response
 {
@@ -142,6 +142,61 @@ number_of_closed_questions - Number of closed questions to be generated. Closed 
     }
   ]
 }
---- enf of example
+--- end of example
+```
 
+## Open question correctnes
+
+```
+``Based on the following inputs check correctness level of user_answer against the correct answer.
+The correctness level should determined by the similarity of the user_answer and the true_answer. The similarity should be determined by logical similarity of the two answers. The similarity should be determined by the following rules:
+- If the user_answer is exactly the same as the true_answer the correctness level should be 100
+- If the user_answer is not exactly the same as the true_answer but is logically the same the correctness level should be 100
+- If the user answer is not logically the same as the true_answer the correctness level should be 0
+- It is possible to have correctness level between 0 and 100 with two decimal places
+
+Answer in json using the json response schema.
+
+---Input Data:
+question: "What is the main advangate of rust programming language?"
+true_answer: "Memory Safety"
+user_answer: "Safe memory"
+---End Input Data
+
+---Input Data explanation:
+question - Question that the user is answering
+true_answer - Correct answer to the question
+user_answer - User answer to the question
+---End Input Data explanation
+
+---Json response schema
+{
+"$schema": "http://json-schema.org/draft-04/schema#",
+"type": "object",
+"properties": {
+"question": {
+"type": "string"
+},
+"true_answer": {
+"type": "string"
+},
+"user_answer": {
+"type": "string"
+},
+"correctness_level": {
+"type": "number"
+}
+},
+"required": ["question", "true_answer", "user_answer", "correctness_level"]
+}
+----End of Json response schema
+
+---Example json response
+{
+"question": "How do you print 'Hello World' in python?",
+"true_answer": "print('Hello World')",
+"user_answer": "use print('Hello World')",
+"correctness_level": 100
+}
+--- end of example`
 ```
