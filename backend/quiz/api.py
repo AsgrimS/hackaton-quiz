@@ -26,8 +26,8 @@ def list_quizzes(_request):
     return Quiz.objects.filter(is_published=True).order_by("id").all()
 
 
-@quiz_api.get("/quizzes/{quiz_id}", response=list[QuizDetailsSchema])
-def list_quizzes(_request, quiz_id):
+@quiz_api.get("/quizzes/{quiz_id}", response=QuizDetailsSchema)
+def single_quiz(_request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     return quiz
 
@@ -56,7 +56,7 @@ def update_quiz(request, quiz_id: int, data: UpdateQuizSchema):
 
 
 @quiz_api.get("/my-quiz-entries", response=QuizMyEntryOutputSchema)
-def start_quiz(request):
+def my_quizzes(request):
     user: User = request.auth
     quiz_entries = QuizEntry.objects.filter(user=user).order_by("id").all()
     return quiz_entries
