@@ -30,7 +30,11 @@ export const Navbar = () => {
         borderColor={useColorModeValue("gray.200", "gray.900")}
         align={"center"}
       >
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+        <Flex
+          flex={{ base: 1 }}
+          justify={{ base: "center", md: "start" }}
+          align="center"
+        >
           <Text
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
             fontFamily={"heading"}
@@ -97,7 +101,7 @@ const DesktopNav = () => {
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
-    <Stack direction={"row"} spacing={4}>
+    <Stack direction={"row"} spacing={4} alignItems="center">
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
@@ -136,6 +140,21 @@ const DesktopNav = () => {
           </Popover>
         </Box>
       ))}
+
+      <Button
+        as={"a"}
+        display={{ base: "none", md: "inline-flex" }}
+        fontSize={"sm"}
+        fontWeight={600}
+        color={"white"}
+        bg={"pink.400"}
+        href={"/api/auth/signin"}
+        _hover={{
+          bg: "pink.300",
+        }}
+      >
+        Sign In
+      </Button>
     </Stack>
   );
 };
