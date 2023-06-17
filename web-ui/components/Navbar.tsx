@@ -151,7 +151,7 @@ const DesktopNav = () => {
         variant="solid"
         colorScheme="blue"
         alignItems="center"
-        href="/new-quiz"
+        href="/create-quiz"
       >
         <PlusSquareIcon />
         <Text ml="1">Create new quiz</Text>
